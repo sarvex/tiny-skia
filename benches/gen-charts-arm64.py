@@ -148,11 +148,7 @@ def collect_values(bench_name, target, order, results):
 def generate_chart_js(name, title, order, results):
     chart_data = f'      const {name}Labels = [\n'
     for _, l in order:
-        if '[' in l:
-            chart_data += f'        {l},\n'
-        else:
-            chart_data += f'        \'{l}\',\n'
-
+        chart_data += f'        {l},\n' if '[' in l else f"        \'{l}\',\n"
     chart_data += f'      ]\n\n'
 
     chart_data += f'      const {name}Data = {{\n'

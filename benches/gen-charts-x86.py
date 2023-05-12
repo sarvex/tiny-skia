@@ -111,10 +111,10 @@ def parse_output(output, suffix, results):
 
         if name.endswith('tiny_skia'):
             name = name[:-10]
-            lib = 'tiny-skia ' + suffix
+            lib = f'tiny-skia {suffix}'
         elif name.endswith('skia'):
             name = name[:-5]
-            lib = 'skia ' + suffix
+            lib = f'skia {suffix}'
         elif name.endswith('raqote'):
             name = name[:-7]
             lib = 'raqote'
@@ -152,11 +152,7 @@ def collect_values(bench_name, target, order, results):
 def generate_chart_js(name, title, order, results):
     chart_data = f'      const {name}Labels = [\n'
     for _, l in order:
-        if '[' in l:
-            chart_data += f'        {l},\n'
-        else:
-            chart_data += f'        \'{l}\',\n'
-
+        chart_data += f'        {l},\n' if '[' in l else f"        \'{l}\',\n"
     chart_data += f'      ]\n\n'
 
     chart_data += f'      const {name}Data = {{\n'
@@ -236,8 +232,8 @@ skia_dir = sys.argv[1]
 results = []
 
 os.environ['SKIA_DIR'] = skia_dir
-os.environ['SKIA_LIB_DIR'] = skia_dir + '/sse2'
-os.environ['LD_LIBRARY_PATH'] = skia_dir + '/sse2'
+os.environ['SKIA_LIB_DIR'] = f'{skia_dir}/sse2'
+os.environ['LD_LIBRARY_PATH'] = f'{skia_dir}/sse2'
 os.environ['RUSTFLAGS'] = '-Ctarget-cpu=x86-64'
 
 subprocess.run(['cargo', 'clean'], check=True)
@@ -249,8 +245,8 @@ parse_output(output, 'SSE2', results)
 
 # collect tiny-skia and Skia results build with AVX2
 os.environ['SKIA_DIR'] = skia_dir
-os.environ['SKIA_LIB_DIR'] = skia_dir + '/avx2'
-os.environ['LD_LIBRARY_PATH'] = skia_dir + '/avx2'
+os.environ['SKIA_LIB_DIR'] = f'{skia_dir}/avx2'
+os.environ['LD_LIBRARY_PATH'] = f'{skia_dir}/avx2'
 os.environ['RUSTFLAGS'] = '-Ctarget-cpu=haswell'
 
 subprocess.run(['cargo', 'clean'], check=True)
